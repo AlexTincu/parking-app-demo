@@ -34,7 +34,7 @@ exports.updatePricing = async (req, res) => {
     const location = await ParkingLocation.findByIdAndUpdate(id, { hourlyRate });
 
     if (!location) {
-      return res.status(404).json({ msg: 'Location not found' });
+      return res.status(404).json({ message: 'Location not found' });
     }
     
     location.hourlyRate = hourlyRate;

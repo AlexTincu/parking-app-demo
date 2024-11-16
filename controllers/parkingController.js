@@ -66,7 +66,7 @@ exports.reserveSpot = async (req, res) => {
     const parkingSpot = await ParkingSpot.findById(spotId);
 
     if (!parkingSpot || parkingSpot.isOccupied === true || parkingSpot.isReserved === true) {
-      return res.status(400).json({ msg: 'Spot is not available' });
+      return res.status(400).json({ message: 'Spot is not available' });
     }
 
     // Calculate end time based on start time and duration
@@ -102,7 +102,7 @@ exports.cancelReservation = async (req, res) => {
     const reservation = await Reservation.findById(id);
 
     if (!reservation || reservation.status !== 'reserved') {
-      return res.status(404).json({ msg: 'Reservation not found or already canceled' });
+      return res.status(404).json({ message: 'Reservation not found or already canceled' });
     }
 
     // Check if the cancellation is within the allowed cancellation period
@@ -110,7 +110,7 @@ exports.cancelReservation = async (req, res) => {
     const currentTime = moment();
 
     if (currentTime.isAfter(cancellationAllowedUntil)) {
-      return res.status(400).json({ msg: 'Cancellation window has passed. Penalty may apply.' });
+      return res.status(400).json({ message: 'Cancellation window has passed. Penalty may apply.' });
     }
 
     // Update reservation status
@@ -122,7 +122,7 @@ exports.cancelReservation = async (req, res) => {
     parkingSpot.status = 'available';
     await parkingSpot.save();
 
-    res.json({ msg: 'Reservation canceled successfully' });
+    res.json({ message: 'Reservation canceled successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

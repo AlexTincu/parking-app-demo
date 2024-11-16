@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 dotenv.config();
 const app = express();
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Import routes
@@ -29,7 +29,7 @@ app.use((req, res) => {
 });
 
 // Enable Mongoose debug mode
-if(process.env.ENV !== 'production'){
+if(process.env.ENV === 'development'){
   mongoose.set('debug', true);
 }
 
