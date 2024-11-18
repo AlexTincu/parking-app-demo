@@ -6,12 +6,12 @@ const Reservation = require('../models/Reservation');
 exports.addLocation = async (req, res) => {
 
   try {
-    const { name, address, totalSpots, hourlyRate, latitude, longitude } = req.body;
+    const { name, address, capacity, hourlyRate, latitude, longitude } = req.body;
 
     const newLocation = new ParkingLocation({
       name,
       address,
-      totalSpots, 
+      capacity, 
       hourlyRate,
       latitude,
       longitude,

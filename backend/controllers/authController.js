@@ -32,7 +32,10 @@ exports.register = async (req, res) => {
     // Generate JWT token
     const token = createToken(user);
 
-    res.status(201).json({ token });
+    // Remove password field from user object before responding
+    const { password: _, ...userWithoutPassword } = user.toObject();
+    
+    res.status(200).json({ token, user:userWithoutPassword });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -53,14 +56,17 @@ exports.login = async (req, res) => {
     let user = await User.findOne({ email });
 
     // Check if user exists && Validate password
-    if (!user || !user.comparePassword(password)) {
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (!user || ! await user.comparePassword(password)) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     // Generate JWT token
     const token = createToken(user);
 
-    res.status(200).json({ token });
+    // Remove password field from user object before responding
+    const { password: _, ...userWithoutPassword } = user.toObject();
+    
+    res.status(200).json({ token, user:userWithoutPassword });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

@@ -39,7 +39,7 @@ describe('Admin Endpoints', () => {
       .send({
         name: 'Main Street Parking',
         address: '123 Main St',
-        totalSpots: 100,
+        capacity: 100,
         // hourlyRate: 2.5,
         latitude:45.5,
         longitude:24.5
@@ -57,7 +57,7 @@ describe('Admin Endpoints', () => {
       .send({
         name: 'Main Street Parking',
         address: '123 Main St',
-        totalSpots: 100,
+        capacity: 100,
         hourlyRate: 2.5,
         latitude:45.5,
         longitude:24.5
@@ -72,7 +72,7 @@ describe('Admin Endpoints', () => {
     const location = new ParkingLocation({
       name: 'Main Street Parking',
       address: '123 Main St',
-      totalSpots: 100,
+      capacity: 100,
       hourlyRate: 2.5,
       latitude:45.5,
       longitude:24.5

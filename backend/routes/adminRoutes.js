@@ -2,8 +2,9 @@ const express = require('express');
 const { addLocation, updatePricing, viewReservations, trackRevenue, addParkingSpot } = require('../controllers/adminController');
 const { auth, admin } = require('../middleware/auth');
 const validate = require('../middleware/validate');
+const ParkingLocation = require('../models/ParkingLocation')
 
-const { body, param, query} = require("express-validator");
+const { body, param, query, check} = require("express-validator");
 
 const router = express.Router();
 
@@ -12,12 +13,18 @@ router.post('/locations', auth, admin,
     [
         body('name').isString().notEmpty().withMessage('Location name is required'),
         body('address').isString().notEmpty().withMessage('Address is required'),
-        body('totalSpots').isInt({ min: 1 }).withMessage('Capacity must be a positive integer'),
+        body('capacity').isInt({ min: 1 }).withMessage('Total spots must be a positive integer'),
         body('hourlyRate')
         .notEmpty().withMessage('Hourly rate is required')
         .isFloat({ min: 0 }).withMessage('Price per hour must be a non-negative number'),
-        body('latitude').isFloat({ min: 2 }).withMessage('Latitude must be a integer'),
-        body('longitude').isFloat({ min: 2 }).withMessage('Longitude must be a integer'),
+        body('latitude').isFloat({ min: 2 }).withMessage('Latitude must be a number'),
+        body('longitude').isFloat({ min: 2 }).withMessage('Longitude must be a number'),
+        check("longitude").custom(async (latitude) => {
+          const existingLocation = await ParkingLocation.findOne({ latitude });
+          if (existingLocation) {
+            throw new Error("Location already exists");
+          }
+        }),
     ],
     validate,
     addLocation);
