@@ -123,71 +123,69 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-import { debounce } from 'lodash'
+<script>
+import { mapActions, mapGetters } from 'vuex'
 
-const store = useStore()
-const router = useRouter()
-
-const searchQuery = ref('')
-const currentPage = ref(1)
-const limit = 5 // Define your page size if needed
-
-const fetchLocations = () => {
-  store.dispatch('admin/fetchLocations', { page: currentPage.value, limit, search: searchQuery.value })
-}
-
-onMounted(() => {
-  fetchLocations() // Fetch locations on component creation
-})
-
-// Debounced search function
-const debouncedSearch = debounce(() => {
-  fetchLocations()
-}, 500)
-
-// Watch for changes in searchQuery and call the debounced search function
-watch(searchQuery, debouncedSearch)
-
-const paginatedLocations = computed(() => {
-  const locations = store.getters['admin/locations'].locations || []
-  return locations.map((location) => {
-    const occupationPercentage = location.totalSpots
-      ? ((location.occupiedSpots / location.totalSpots) * 100).toFixed(0)
-      : 0
-
+export default {
+  name: 'AdminDashboard',
+  data() {
     return {
-      ...location,
-      occupationPercentage,
+      searchQuery: '',
+      debouncedQuery: '',
+      currentPage: 1,
+      limit: 5, // Define your page size if needed
     }
-  })
-})
+  },
+  created() {
+    this.fetchLocations({ page: this.currentPage, limit: this.limit, search: this.searchQuery }) // Fetch locations on component creation
+  },
+  computed: {
+    ...mapGetters('admin', ['locations', 'revenue', 'error']),
+    paginatedLocations() {
+      // calculate the percentage of occupation for each location
+      const locations = this.locations.locations || []
+      return locations.map((location) => {
+        const occupationPercentage = location.totalSpots
+          ? ((location.occupiedSpots / location.totalSpots) * 100).toFixed(0)
+          : 0
 
-const totalPages = computed(() => store.getters['admin/locations'].totalPages)
-
-const searchLocations = () => {
-  fetchLocations()
-}
-
-const updateRate = (locationId, newRate) => {
-  store.dispatch('admin/updateHourlyRate', { locationId, newRate })
-}
-
-const goToLocationDetails = (locationId) => {
-  alert('not implemented yet')
-  router.push({ name: 'LocationDetails', params: { id: locationId } })
-}
-
-const removeTheLocation = (locationId) => {
-  store.dispatch('admin/removeLocation', locationId)
-}
-
-const changePage = (page) => {
-  if (page < 1 || page > totalPages.value) return // Prevent invalid page numbers
-  currentPage.value = page
-  fetchLocations() // Fetch locations for the new page
+        return {
+          ...location,
+          occupationPercentage,
+        }
+      })
+    },
+    totalPages() {
+      return this.locations.totalPages
+    },
+  },
+  methods: {
+    searchLocations() {
+      this.fetchLocations({ page: this.currentPage, limit: this.limit, search: this.searchQuery })
+    },
+    ...mapActions('admin', [
+      'fetchLocations',
+      'updateHourlyRate',
+      'addSpot',
+      'removeSpot',
+      'fetchRevenue',
+      'removeLocation', // New action for removing a location
+    ]),
+    updateRate(locationId, newRate) {
+      this.updateHourlyRate({ locationId, newRate })
+    },
+    goToLocationDetails(locationId) {
+      alert('not implemented yet')
+      this.$router.push({ name: 'LocationDetails', params: { id: locationId } })
+    },
+    removeTheLocation(locationId) {
+      this.removeLocation(locationId)
+    },
+    changePage(page) {
+      if (page < 1 || page > this.totalPages) return // Prevent invalid page numbers
+      this.currentPage = page
+      this.fetchLocations({ page: this.currentPage, limit: this.limit, search: this.searchQuery }) // Fetch locations for the new page
+    },
+  },
 }
 </script>

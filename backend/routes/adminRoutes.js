@@ -22,16 +22,28 @@ router.post('/locations', auth, admin,
     [
         body('name').isString().notEmpty().withMessage('Location name is required'),
         body('address').isString().notEmpty().withMessage('Address is required'),
+        body('address').custom(async (address) => {
+          const existingLocation = await ParkingLocation.findOne({ address });
+          if (existingLocation) {
+            throw new Error("A location with this address already exists");
+          }
+        }),
         body('capacity').isInt({ min: 1 }).withMessage('Total spots must be a positive integer'),
         body('hourlyRate')
-        .notEmpty().withMessage('Hourly rate is required')
-        .isFloat({ min: 0 }).withMessage('Price per hour must be a non-negative number'),
-        body('latitude').isFloat({ min: 2 }).withMessage('Latitude must be a number'),
-        body('longitude').isFloat({ min: 2 }).withMessage('Longitude must be a number'),
-        check("longitude").custom(async (latitude) => {
-          const existingLocation = await ParkingLocation.findOne({ latitude });
+          .notEmpty().withMessage('Hourly rate is required')
+          .isFloat({ min: 0 }).withMessage('Price per hour must be a non-negative number'),
+        body('latitude').isFloat({ min: -90, max: 90 }).withMessage('Latitude must be a number between -90 and 90'),
+        body('longitude').isFloat({ min: -180, max: 180 }).withMessage('Longitude must be a number between -180 and 180'),
+        body('latitude').custom(async (latitude, { req }) => {
+          const existingLocation = await ParkingLocation.findOne({ latitude, longitude: req.body.longitude });
           if (existingLocation) {
-            throw new Error("Location already exists");
+            throw new Error("A location with this latitude and longitude already exists");
+          }
+        }),
+        body('longitude').custom(async (longitude, { req }) => {
+          const existingLocation = await ParkingLocation.findOne({ latitude: req.body.latitude, longitude });
+          if (existingLocation) {
+            throw new Error("A location with this latitude and longitude already exists");
           }
         }),
     ],
