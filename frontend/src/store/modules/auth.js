@@ -1,13 +1,13 @@
 import axios from 'axios'
 
-// I choose to store the user to use it's role for showing different content
+// I choose to store the user to use it's role to showing different content
 const state = {
   token: localStorage.getItem('token') || null,
   user: JSON.parse(localStorage.getItem('user')) || null,
   error: null,
 }
 
-const mutations = {  
+const mutations = {
   setToken(state, token) {
     state.token = token
     localStorage.setItem('token', token)

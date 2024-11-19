@@ -67,7 +67,7 @@ const handleLogin = async () => {
   const isSuccess = await store.dispatch('auth/login', credentials)
 
   if (isSuccess) {    
-    router.push(isAdmin ? '/admin' : '/user')
+    router.push(isAdmin.value ? '/admin' : '/user')
   }
 }
 
