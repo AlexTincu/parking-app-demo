@@ -1,5 +1,5 @@
 const express = require('express');
-const { addLocation, updatePricing, viewReservations, trackRevenue, addParkingSpot } = require('../controllers/adminController');
+const adminController = require('../controllers/adminController');
 const { auth, admin } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const ParkingLocation = require('../models/ParkingLocation')
@@ -8,7 +8,16 @@ const { body, param, query, check} = require("express-validator");
 
 const router = express.Router();
 
-// Route to add a new parking location
+// Get all parking location
+router.get('/locations', auth, admin, adminController.getParkingLocations);
+
+// Delete a location
+router.delete('/locations/:id', auth, admin, 
+  [param('id').isMongoId().withMessage('Valid location ID is required')],
+  validate,
+  adminController.deleteLocation); 
+
+// Add a new parking location
 router.post('/locations', auth, admin, 
     [
         body('name').isString().notEmpty().withMessage('Location name is required'),
@@ -27,27 +36,41 @@ router.post('/locations', auth, admin,
         }),
     ],
     validate,
-    addLocation);
+    adminController.addLocation);
 
-// Route to update pricing for a parking location
+// Update pricing for a parking location
 router.put('/locations/:id/pricing', auth, admin, [
     param('id').isMongoId().withMessage('Valid location ID is required'),
     body('hourlyRate').isFloat({ min: 0 }).withMessage('Price per hour must be a non-negative number'),
   ],
   validate,
-  updatePricing);
+  adminController.updatePricing);
+
+  // Get all parking spots for a specified location
+router.get('/locations/:locationId/spots', auth, admin, 
+  param('locationId').isMongoId().withMessage('Valid location ID is required'),
+  validate,
+  adminController.getParkingSpotsByLocation);
 
 // Route to create a new parking spot
-router.post('/spots', auth, admin, [
-    body('locationId').isMongoId().withMessage('Valid location ID is required'),
-    body('spotNumber').isString().notEmpty().withMessage('Spot number is required'),
+router.post('/locations/:locationId/spots', auth, admin, [
+    param('locationId').isMongoId().withMessage('Valid location ID is required'),    
+    body('spotNumber').isInt().withMessage('Spot number must be a non-negative number').notEmpty().withMessage('Spot number is required'),
     body('type').isIn(['compact', 'handicapped', 'regular']).withMessage('Type must be one of: compact, handicap, regular'),
     body('status').optional().isIn(['available', 'reserved']).withMessage('Status must be either "available" or "reserved"'),
   ],
   validate,
-  addParkingSpot);
+  adminController.addParkingSpot);
 
-router.get('/reservations', auth, admin, viewReservations);
+// Route to create a new parking spot
+router.delete('/locations/:locationId/spots/:spotId/', auth, admin, [
+  param('locationId').isMongoId().withMessage('Valid location ID is required'),
+  param('spotId').isMongoId().withMessage('Valid spot ID is required')
+],
+validate,
+adminController.deleteParkingSpot);  
+
+router.get('/reservations', auth, admin, adminController.viewReservations);
 
 // Route to track revenue
 router.get('/revenue', auth, admin,  [
@@ -61,6 +84,6 @@ router.get('/revenue', auth, admin,  [
       .withMessage('End date must be a valid ISO 8601 date'),
   ],
   validate,
-  trackRevenue);
+  adminController.trackRevenue);
 
 module.exports = router;

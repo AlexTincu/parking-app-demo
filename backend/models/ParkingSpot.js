@@ -8,4 +8,7 @@ const parkingSpotSchema = new mongoose.Schema({
   type: { type: String, enum: ['compact', 'handicap', 'regular'], required: true },
 });
 
+// Compound index
+parkingSpotSchema.index({ id: 1, locationId: 1 });
+
 module.exports = mongoose.model('ParkingSpot', parkingSpotSchema);
