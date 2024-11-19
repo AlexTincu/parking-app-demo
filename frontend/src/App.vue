@@ -12,12 +12,11 @@ const isAuthenticated = computed(() => store.getters['auth/isAuthenticated'])
 const isAdmin = computed(() => store.getters['auth/role'] === 'admin')
 
 const handleLogout = async () => {
-  await store.dispatch("auth/logout");
-  router.push("/");
-};
-
+  await store.dispatch('auth/logout')
+  router.push('/')
+}
 </script>
- 
+
 <template>
   <header>
     <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
@@ -29,7 +28,7 @@ const handleLogout = async () => {
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/user">User Dashboard</RouterLink>
         <RouterLink to="/admin" v-if="isAdmin">Admin Dashboard</RouterLink>
-        <RouterLink to="/logout" v-if="isAuthenticated" @click="handleLogout()" >Logout</RouterLink>
+        <RouterLink to="/logout" v-if="isAuthenticated" @click="handleLogout()">Logout</RouterLink>
       </nav>
     </div>
   </header>

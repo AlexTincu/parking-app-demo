@@ -30,28 +30,28 @@ const mutations = {
   },
 }
 
-const actions = {  
+const actions = {
   async login({ commit }, credentials) {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, credentials);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, credentials)
 
       // Assuming the token is in response.data.token
-      commit("setToken", response.data.token);
-      commit('setUser', response.data.user);
-      
-      return true;
+      commit('setToken', response.data.token)
+      commit('setUser', response.data.user)
+
+      return true
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        commit("setError", error.response.data.message || "Invalid credentials.");
+        commit('setError', error.response.data.message || 'Invalid credentials.')
       } else {
-        commit("setError", "An error occurred. Please try again later.");
-        console.log(error);
+        commit('setError', 'An error occurred. Please try again later.')
+        console.log(error)
       }
 
-      return false;
+      return false
     }
   },
-  
+
   logout({ commit }) {
     commit('clearAuth')
   },
@@ -62,13 +62,13 @@ const getters = {
   user: (state) => state.user,
   role: (state) => state.user?.role,
   isAuthenticated: (state) => !!state.token,
-  error: (state) => state.error,  
-};
+  error: (state) => state.error,
+}
 
 export default {
   namespaced: true,
   state,
   mutations,
   actions,
-  getters
+  getters,
 }
