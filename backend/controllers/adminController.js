@@ -1,6 +1,7 @@
 const ParkingLocation = require("../models/ParkingLocation");
 const ParkingSpot = require("../models/ParkingSpot");
 const Reservation = require("../models/Reservation");
+const CustomError = require('../util/customError');
 const { escape } = require('validator');
 
 // Get parking locations
@@ -91,7 +92,7 @@ const deleteLocation = async (req, res) => {
   }
 };
 // Add a new parking location
-const addLocation = async (req, res) => {
+const addLocation = async (req, res, next) => {
   try {
     const { name, address, capacity, hourlyRate, latitude, longitude } = req.body;
 
@@ -99,16 +100,20 @@ const addLocation = async (req, res) => {
       name,
       address,
       capacity,
+      availableSpots:capacity,
       hourlyRate,
-      latitude,
-      longitude,
+      location: {
+        type: 'Point',
+        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+      },
     });
 
     await newLocation.save();
     res.status(201).json(newLocation);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
+    // console.error(err);
+    // res.status(500).send("Server error");
+    next(new CustomError(err, 500)); // a different aproach
   }
 };
 

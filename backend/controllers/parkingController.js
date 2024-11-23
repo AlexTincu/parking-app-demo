@@ -13,6 +13,36 @@ exports.getParkingLocations = async (req, res) => {
   }
 };
 
+exports.findNearbyAvailableParking = async(req, res, next) => {
+  try {
+    let { latitude, longitude, maxDistance} = req.query;
+
+    // Convert latitude and longitude to numbers
+    latitude = parseFloat(latitude);
+    longitude = parseFloat(longitude);
+    maxDistance = parseInt(maxDistance) | 1000;
+
+    const closestLocation = await ParkingLocation.find({
+      location: {
+        $nearSphere: {
+          $geometry: { type: 'Point', coordinates: [longitude, latitude] },
+          $maxDistance: maxDistance, 
+        },
+      },
+      availableSpots: { $gt: 0 }, // Only locations with available spots
+    });
+
+    if (!closestLocation) {
+      return res.status(404).json({ message: 'No available parking locations found nearby' });
+    }
+
+    res.json(closestLocation);
+  } catch (err) {
+    console.log(err);
+    next(err); // Pass the error to the error handler middleware
+  }
+}
+
 // Get available parking spots
 exports.getParkingSpots = async (req, res) => {
   const { locationId } = req.query;
@@ -20,7 +50,7 @@ exports.getParkingSpots = async (req, res) => {
     const spots = await ParkingSpot.find({ locationId, isReserved: false, isOccupied: false });
     res.status(200).json(spots);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching parking spots.', error: err });
+    next(err);
   }
 };
 
@@ -50,8 +80,7 @@ exports.findParking = async (req, res) => {
 
     res.json(availableSpots);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
+    next(err);
   }
 };
 
@@ -89,8 +118,7 @@ exports.reserveSpot = async (req, res) => {
 
     res.status(201).json(newReservation);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
+    next(err);
   }
 };
 
@@ -124,7 +152,6 @@ exports.cancelReservation = async (req, res) => {
 
     res.json({ message: 'Reservation canceled successfully' });
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Server error');
+    next(err);
   }
 };

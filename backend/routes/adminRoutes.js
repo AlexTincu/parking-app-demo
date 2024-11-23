@@ -8,16 +8,7 @@ const { body, param, query, check} = require("express-validator");
 
 const router = express.Router();
 
-// Get all parking location
-router.get('/locations', auth, admin, adminController.getParkingLocations);
-
-// Delete a location
-router.delete('/locations/:id', auth, admin, 
-  [param('id').isMongoId().withMessage('Valid location ID is required')],
-  validate,
-  adminController.deleteLocation); 
-
-// Add a new parking location
+// Create a new parking location
 router.post('/locations', auth, admin, 
     [
         body('name').isString().notEmpty().withMessage('Location name is required'),
@@ -50,6 +41,9 @@ router.post('/locations', auth, admin,
     validate,
     adminController.addLocation);
 
+// Get all parking location
+router.get('/locations', auth, admin, adminController.getParkingLocations);
+
 // Update pricing for a parking location
 router.put('/locations/:id/pricing', auth, admin, [
     param('id').isMongoId().withMessage('Valid location ID is required'),
@@ -58,7 +52,7 @@ router.put('/locations/:id/pricing', auth, admin, [
   validate,
   adminController.updatePricing);
 
-  // Get all parking spots for a specified location
+// Get all parking spots for a specified location
 router.get('/locations/:locationId/spots', auth, admin, 
   param('locationId').isMongoId().withMessage('Valid location ID is required'),
   validate,
@@ -98,4 +92,11 @@ router.get('/revenue', auth, admin,  [
   validate,
   adminController.trackRevenue);
 
+// Delete a location
+router.delete('/locations/:id', auth, admin, 
+  [param('id').isMongoId().withMessage('Valid location ID is required')],
+  validate,
+  adminController.deleteLocation); 
+
+  
 module.exports = router;
