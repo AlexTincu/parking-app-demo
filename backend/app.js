@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const errorHandler = require('./middleware/errorHandler')
 
 dotenv.config();
 const app = express();
@@ -10,7 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend's URL
+  origin: process.env.FRONTEND_URL,
   credentials: false // If using cookies for auth, ensure credentials are set to true
 }));
 
@@ -33,6 +34,9 @@ app.get('/', (req, res) => {
 app.use((req, res) => {
     res.status(404).json({ message: 'Page Not Found'});
 });
+
+// Centralized error handling middleware
+app.use(errorHandler);
 
 // Enable Mongoose debug mode
 if(process.env.ENV === 'development'){

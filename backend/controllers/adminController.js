@@ -11,8 +11,6 @@ const getParkingLocations = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Default to 10 locations per page
     const skip = (page - 1) * limit;
 
-    // const locations = await ParkingLocation.find().skip(skip).limit(limit);
-
     // Aggregation pipeline
     const locations = await ParkingLocation.aggregate([
       {
@@ -95,8 +93,7 @@ const deleteLocation = async (req, res) => {
 // Add a new parking location
 const addLocation = async (req, res) => {
   try {
-    const { name, address, capacity, hourlyRate, latitude, longitude } =
-      req.body;
+    const { name, address, capacity, hourlyRate, latitude, longitude } = req.body;
 
     const newLocation = new ParkingLocation({
       name,
