@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-dashboard p-8 bg-gray-100 min-h-screen">
+  <div class="min-h-screen p-8 bg-gray-100 admin-dashboard">
     <!-- Navigation Menu -->
     <nav class="mb-6">
       <router-link to="/admin" class="mr-4">Locations</router-link>
@@ -17,29 +17,25 @@
     </div>
 
     <!-- Locations Section -->
-    <section class="bg-white shadow-md rounded-lg p-6 mb-8">
-      <h2 class="text-2xl font-semibold mb-4 text-gray-700">Locations</h2>
+    <section class="p-6 mb-8 bg-white rounded-lg shadow-md">
+      <h2 class="mb-4 text-2xl font-semibold text-gray-700">Locations</h2>
       <div
         v-for="location in paginatedLocations"
         :key="location._id"
-        class="border-b border-gray-200 pb-4 mb-4"
+        class="pb-4 mb-4 border-b border-gray-200"
       >
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h3 class="text-xl font-medium text-gray-800">
+
             {{ location.name }} - {{ location.address }} <br />
-            <span class="text-gray-500 text-sm"
+            <span class="text-sm text-gray-500"
               >Occupied: {{ location.occupiedSpots }} / {{ location.totalSpots }} -
               {{ location.occupationPercentage }}%</span
             >
-            <span class="text-gray-500 text-sm mx-2">|</span>
-            <span class="text-gray-500 text-sm">Rate: ${{ location.hourlyRate }}/hr</span>
+            <span class="mx-2 text-sm text-gray-500">|</span>
+            <span class="text-sm text-gray-500">Rate: ${{ location.hourlyRate }}/hr</span>
           </h3>
-          <button
-            @click="goToLocationDetails(location._id)"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded-md"
-          >
-            Details
-          </button>
+          <Button @click="goToLocationDetails(location._id)" variant="ghost">Details</Button>
         </div>
 
         <!-- Update Rate Input -->
@@ -50,18 +46,12 @@
             placeholder="New Rate"
             class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button
+          <Button
             @click="updateRate(location._id, location.newRate)"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md"
           >
             Update Rate
-          </button>
-          <button
-            @click="removeTheLocation(location._id)"
-            class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md"
-          >
-            Remove Location
-          </button>
+          </Button>
+          <Button @click="removeTheLocation(location._id)" variant="destructive">Remove Location</Button>
         </div>
 
         <!-- Spots List -->
@@ -69,50 +59,50 @@
           <li
             v-for="spot in location.spots"
             :key="spot._id"
-            class="flex items-center justify-between text-gray-600 mb-2"
+            class="flex items-center justify-between mb-2 text-gray-600"
           >
             <span>Spot ID: {{ spot._id }}</span>
-            <button
+            <Button
               @click="removeSpot(location._id, spot._id)"
-              class="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded-md"
+              class="px-3 py-1 font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
             >
               Remove
-            </button>
+            </Button>
           </li>
         </ul>
       </div>
 
       <!-- Pagination Controls -->
-      <div class="flex justify-between items-center mt-4">
-        <button
+      <div class="flex items-center justify-between mt-4">
+        <Button
           @click="changePage(currentPage - 1)"
           :disabled="currentPage === 1"
-          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
+          class="px-4 py-2 font-medium text-gray-800 bg-gray-300 rounded-md hover:bg-gray-400"
         >
           Previous
-        </button>
+        </Button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button
+        <Button
           @click="changePage(currentPage + 1)"
           :disabled="currentPage === totalPages"
-          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
+          class="px-4 py-2 font-medium text-gray-800 bg-gray-300 rounded-md hover:bg-gray-400"
         >
           Next
-        </button>
+        </Button>
       </div>
     </section>
 
     <!-- Revenue Section -->
-    <section class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-semibold mb-4 text-gray-700">Revenue</h2>
-      <p v-if="revenue" class="text-xl text-gray-800 font-medium">
+    <section class="p-6 bg-white rounded-lg shadow-md">
+      <h2 class="mb-4 text-2xl font-semibold text-gray-700">Revenue</h2>
+      <p v-if="revenue" class="text-xl font-medium text-gray-800">
         Total Revenue: <span class="text-green-600">${{ revenue.total }}</span>
       </p>
       <p v-else class="text-gray-500">No revenue data available.</p>
     </section>
 
     <!-- Error Message -->
-    <p v-if="error" class="text-red-500 mt-6">{{ error }}</p>
+    <p v-if="error" class="mt-6 text-red-500">{{ error }}</p>
   </div>
 </template>
 
@@ -121,6 +111,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
+import { Button } from '@/components/ui/Button'
 
 const store = useStore()
 const router = useRouter()

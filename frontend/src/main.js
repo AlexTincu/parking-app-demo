@@ -1,10 +1,12 @@
-import './assets/main.css'
+// import './assets/main.css'
+import './assets/index.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import store from './store'
 import router from './router'
 import axios from 'axios'
 // import "./assets/tailwind.css"; // Import Tailwind CSS
+
 
 axios.interceptors.request.use(
   (config) => {
