@@ -3,7 +3,7 @@
 
 ## Important
 
-App created with ChatGPT for demo purposes. Work in progress.
+App created for demo purposes. Work in progress.
 
 ## Description
 
@@ -59,12 +59,7 @@ Replace `your_mongodb_connection_string` and `your_jwt_secret` with your actual 
    ```
    By default, the server runs on `http://localhost:5000`.
 
-2. **Run in development mode** (with live reloading):
-   ```bash
-   npm run dev
-   ```
-
-3. **API Endpoints**: Use the Postman collection included in the project to test the API endpoints (or create a new one using the API documentation below).
+2. **API Endpoints**: Use the Postman collection included in the project to test the API endpoints (or create a new one using the API documentation below).
 
 ---
 

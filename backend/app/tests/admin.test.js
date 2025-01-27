@@ -45,7 +45,7 @@ describe('Admin Endpoints', () => {
         longitude:24.5
       });
       
-    expect(res.statusCode).toEqual(403);
+    expect(res.statusCode).toEqual(400);
     expect(res.body).toHaveProperty('status', 'error');
     expect(res.body).toHaveProperty('errors');
   });

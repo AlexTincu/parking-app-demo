@@ -22,7 +22,7 @@ const handleLogout = async () => {
     <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
 
     <div class="wrapper">
-      <HelloWorld msg="Demo parking App" />
+      <HelloWorld msg="Demo parking app" />
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
@@ -31,8 +31,8 @@ const handleLogout = async () => {
         <RouterLink to="/logout" v-if="isAuthenticated" @click="handleLogout()">Logout</RouterLink>
       </nav>
     </div>
+    
   </header>
-
   <RouterView />
 </template>
 

@@ -13,7 +13,7 @@ exports.auth = async (req, res, next) => {
     const user = await User.findById(decoded.user.id);
 
     if (!user) {
-      return res.status(403).json({ message: "Access denied" });
+      return res.status(401).json({ message: "Access denied" });
     }
 
     req.user = user;

@@ -1,6 +1,5 @@
 const express = require("express");
 const parkingController = require("../controllers/parkingController");
-//{ getParkingLocations, getParkingSpots, findParking, reserveSpot, cancelReservation }
 const { auth } = require("../middleware/auth"); // Auth middleware for protected routes
 const { body, query } = require("express-validator");
 const validate = require("../middleware/validate");
@@ -55,10 +54,6 @@ router.post(
 );
 
 // Route to cancel a reservation
-router.delete(
-  "/reservation/:id/cancel",
-  auth,
-  parkingController.cancelReservation
-);
+router.delete("/reservation/:id/cancel", auth, parkingController.cancelReservation);
 
 module.exports = router;

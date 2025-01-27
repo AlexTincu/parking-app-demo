@@ -31,6 +31,27 @@ const mutations = {
 }
 
 const actions = {
+  async register({ commit }, payload) {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, payload)
+
+      // Assuming the token is in response.data.token
+      commit('setToken', response.data.token)
+      commit('setUser', response.data.user)
+
+      return true
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        commit('setError', error.response.data.message || 'Invalid data.')
+      } else {
+        commit('setError', 'An error occurred. Please try again later.')
+        console.log(error)
+      }
+
+      return false
+    }
+  },
+
   async login({ commit }, credentials) {
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, credentials)

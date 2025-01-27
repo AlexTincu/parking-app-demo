@@ -11,7 +11,7 @@ router.post(
     check("name", "Name is required").notEmpty(),
     check("email", "Please include a valid email").isEmail(),
     check("password", "Password must be at least 6 characters").isLength({min: 6}),
-    check("vehiclePlate", "Vehicle plate is required").notEmpty(),
+    // check("vehiclePlate", "Vehicle plate is required").notEmpty(),
   ],
   register
 );

@@ -17,7 +17,7 @@ exports.findNearbyAvailableParking = async(req, res, next) => {
   try {
     let { latitude, longitude, maxDistance} = req.query;
 
-    // Convert latitude and longitude to numbers
+    // Convert latitude, longitude and maxDistance to numbers
     latitude = parseFloat(latitude);
     longitude = parseFloat(longitude);
     maxDistance = parseInt(maxDistance) | 1000;

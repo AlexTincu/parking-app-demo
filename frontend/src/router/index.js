@@ -12,6 +12,7 @@ const router = createRouter({
   routes: [
     { path: '/', component: HomePage },
     { path: '/login', component: () => import('@/views/Login.vue') }, // lazy-loaded component
+    { path: '/register', component: () => import('@/views/Register.vue') }, // lazy-loaded component
     // { path: '/login', component: Login },
     { path: '/user', component: UserDashboard, beforeEnter: authGuard },
     { path: '/admin', component: AdminDashboard, beforeEnter: adminGuard },
